@@ -1,7 +1,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
+using Shared.Controllers.Utils;
 
-namespace TechTrain.ReusableModules.WebApi.Controllers
+namespace Shared.Controllers
 {
     [ApiController]
     public class ApiValidationController : ControllerBase
@@ -15,7 +16,7 @@ namespace TechTrain.ReusableModules.WebApi.Controllers
 
         [HttpGet]
         [Route("/validateApi")]
-        public IEnumerable<string> ValidateApi(int userId)
+        public IEnumerable<string> ValidateApi()
         {
             var validator = new ApiDescriptionValidator();
             foreach(var group in _apiDescriptionGroupCollectionProvider.ApiDescriptionGroups.Items)
