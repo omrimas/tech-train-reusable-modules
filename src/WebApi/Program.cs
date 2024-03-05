@@ -1,6 +1,8 @@
 using System.Threading.Channels;
-using Shared;
+using Shared.Extensions;
 using Shared.Middlewares;
+using Shared.Validators;
+using Webapi.CustomValidators;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,10 +13,8 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddSingleton(Channel.CreateUnbounded<string>(new UnboundedChannelOptions() { SingleReader = true }));
-builder.Services.AddSingleton(svc => svc.GetRequiredService<Channel<string>>().Reader);
-builder.Services.AddSingleton(svc => svc.GetRequiredService<Channel<string>>().Writer);
-builder.Services.AddHostedService<ApiValidationErrorsListener>();
+builder.Services.AddSingleton<IApiValidator, MyValidator>();
+builder.Services.AddApiValidator();
 
 var app = builder.Build();
 

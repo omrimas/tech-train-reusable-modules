@@ -3,9 +3,9 @@ using Microsoft.AspNetCore.Mvc.Controllers;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.AspNetCore.Routing.Patterns;
 
-namespace Shared.Controllers.Utils;
+namespace Shared.Validators;
 
-public class ApiDescriptionValidator
+public class ApiDescriptionValidator : IApiValidator
 {
     public string? Validate(ApiDescription apiDescription)
     {
@@ -36,7 +36,7 @@ public class ApiDescriptionValidator
             }
         }
 
-        if (apiDescription.HttpMethod == "GET" && 
+        if (apiDescription.HttpMethod == "GET" &&
             !(controllerActionDescriptor.ActionName.StartsWith("Get") || controllerActionDescriptor.ActionName.StartsWith("List")))
         {
             return $"Illegal action name {controllerActionDescriptor.ActionName} - GET actions should start with Get or List";

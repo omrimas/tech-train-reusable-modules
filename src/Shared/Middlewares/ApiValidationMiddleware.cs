@@ -1,7 +1,7 @@
 ﻿using System.Threading.Channels;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.Routing.Template;
-using Shared.Controllers.Utils;
+using Shared.Validators;
 
 namespace Shared.Middlewares
 {
@@ -11,16 +11,19 @@ namespace Shared.Middlewares
         private readonly TemplateMatcher _requestMatcher;
         IApiDescriptionGroupCollectionProvider _apiDescriptionGroupCollectionProvider;
         ChannelWriter<string> _channelWriter;
+        IApiValidators _apiValidators;
 
         public ApiValidationMiddleware(
             RequestDelegate next,
             IApiDescriptionGroupCollectionProvider apiDescriptionGroupCollectionProvider,
-            ChannelWriter<string> channelWriter)
+            ChannelWriter<string> channelWriter,
+            IApiValidators apiValidators)
         {
             _apiDescriptionGroupCollectionProvider = apiDescriptionGroupCollectionProvider;
             _next = next;
             _requestMatcher = new TemplateMatcher(TemplateParser.Parse("validateApi"), new RouteValueDictionary());
             _channelWriter = channelWriter;
+            _apiValidators = apiValidators;
         }
 
         public async Task Invoke(HttpContext httpContext)
@@ -32,14 +35,16 @@ namespace Shared.Middlewares
                 return;
             }
 
-            var validator = new ApiDescriptionValidator();
-            foreach (var group in _apiDescriptionGroupCollectionProvider.ApiDescriptionGroups.Items)
+            foreach (var apiValidator in _apiValidators.GetValidators())
             {
-                foreach (var item in group.Items)
+                foreach (var group in _apiDescriptionGroupCollectionProvider.ApiDescriptionGroups.Items)
                 {
-                    var result = validator.Validate(item);
-                    if (result != null)
-                        await _channelWriter.WriteAsync(result);
+                    foreach (var item in group.Items)
+                    {
+                        var result = apiValidator.Validate(item);
+                        if (result != null)
+                            await _channelWriter.WriteAsync(result);
+                    }
                 }
             }
         }
