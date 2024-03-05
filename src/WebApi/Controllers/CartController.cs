@@ -8,7 +8,7 @@ namespace TechTrain.ReusableModules.WebApi.Controllers
     {
         [HttpGet]
         [Route("/users/{userId}/cart")]
-        public Task<Cart> GetCart([FromRoute] string userId)
+        public Task<Cart> GetCart([FromRoute] int userId)
         {
             throw new NotImplementedException();
         }
@@ -20,7 +20,7 @@ namespace TechTrain.ReusableModules.WebApi.Controllers
             throw new NotImplementedException();
         }
 
-        [HttpPost]
+        [HttpPut]
         [Route("/carts/{cartId}/items")]
         public Task<IActionResult> AddItemToCart([FromRoute] string cartId, [FromBody] CartItem item)
         {
