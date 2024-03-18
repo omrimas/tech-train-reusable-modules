@@ -5,9 +5,9 @@ using Microsoft.AspNetCore.Routing.Patterns;
 
 namespace Shared.Validators;
 
-public class ApiDescriptionValidator : IApiValidator
+public class ApiDescriptionValidator : BaseApiValidator
 {
-    public string? Validate(ApiDescription apiDescription)
+    public override string? Validate(ApiDescription apiDescription)
     {
         if (string.IsNullOrWhiteSpace(apiDescription.RelativePath))
             return "All Api methods should have a path";

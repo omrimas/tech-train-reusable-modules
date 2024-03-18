@@ -37,14 +37,9 @@ namespace Shared.Middlewares
 
             foreach (var apiValidator in _apiValidators.GetValidators())
             {
-                foreach (var group in _apiDescriptionGroupCollectionProvider.ApiDescriptionGroups.Items)
+                foreach (string validationError in apiValidator.Validate(_apiDescriptionGroupCollectionProvider.ApiDescriptionGroups.Items))
                 {
-                    foreach (var item in group.Items)
-                    {
-                        var result = apiValidator.Validate(item);
-                        if (result != null)
-                            await _channelWriter.WriteAsync(result);
-                    }
+                    await _channelWriter.WriteAsync(validationError);
                 }
             }
         }
